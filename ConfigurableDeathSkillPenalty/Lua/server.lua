@@ -1,15 +1,13 @@
 local utils = require "utils"
 
-local function sendDeathSkillPenaltyToClient(client)
-  local message = Networking.Start("DeathSkillPenalty.Sync")
-  message.WriteSingle(CDSP.Config.deathSkillPenalty)
-  Networking.Send(message, client.Connection)
+local function syncSettingsWithClient(client)
+  local msg = Networking.Start("DeathSkillPenalty.Sync")
+  msg.WriteSingle(CDSP.Config.deathSkillPenalty)
+  Networking.Send(msg, client.Connection)
 end
 
-Hook.Add("roundStart", "DeathSkillPenalty.roundStart", function()
-  for connectedClient in Client.ClientList do
-    sendDeathSkillPenaltyToClient(connectedClient)
-  end
+Networking.Receive("DeathSkillPenalty.Sync", function(_, client)
+  syncSettingsWithClient(client)
 end)
 
 Hook.Patch(
@@ -70,7 +68,7 @@ Hook.Add("chatMessage", "CDSP.chatMessage", function(message, client)
     Game.SendMessage("Death skill penalty changed to " .. (value * 100) .. "%!", ChatMessageType.Server)
 
     for connectedClient in Client.ClientList do
-      sendDeathSkillPenaltyToClient(connectedClient)
+      syncSettingsWithClient(connectedClient)
     end
   else
     utils.SendChatMessage(client, "Invalid option: " .. option)
