@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<contentpackage name="ConfigurableDeathSkillPenalty" corepackage="false" modversion="1.0.0" gameversion="1.0.21.0">
+    <Other file="%ModDir%/Lua/Autorun/init.lua" />
+</contentpackage>
